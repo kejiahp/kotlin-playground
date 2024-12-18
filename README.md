@@ -12,3 +12,5 @@ Kotlin is an open-source programming language that runs on the Java Virtual Mach
 
 
 _*Real Reason*_: I need Kotlin for a school project involving android development and I've decided to use JetPack Compose. I shall not sully my hands with Android XML 😇.
+
+[Kotlin & Android Development Course: Build a Quiz Application](https://www.youtube.com/watch?v=kNghEbknLs8)
