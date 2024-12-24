@@ -14,6 +14,8 @@
  * covariance can have errors because it allows subtypes and subtypes might have override the supertype properties.
  *
  * contravariance - opposite of covariance, accepts only super-classes of a type, usually the upper bounds type, applied using `in` keyword | UP THE INHERITANCE TREE
+ *
+ * To prevent type erasure at compile time, the `reified` keyword can be used. `reified` keyword can only be used by inline functions.
  */
 
 fun main() {
@@ -23,8 +25,8 @@ fun main() {
     val bPlayer1 = BaseballPlayer("John")
     val bPlayer2 = BaseballPlayer("Jane")
 
-    val fTeam = Team<Player>("Barcelona", mutableListOf<FootballPlayer>(fPlayer1))
-    fTeam.addPlayers(fPlayer2);
+//    val fTeam = Team<Player>("Barcelona", mutableListOf<FootballPlayer>(fPlayer1))
+//    fTeam.addPlayers(fPlayer2);
 
     val bTeam = Team<BaseballPlayer>("NewYortMets", mutableListOf(bPlayer1))
     bTeam.addPlayers(bPlayer2)
@@ -32,27 +34,70 @@ fun main() {
 //    val gameTeam = Team<GamesPlayer>("Games Team", mutableListOf())
 //
 //    val codTeam = Team<BaseballPlayer>("NewYortMets", mutableListOf(bPlayer1))
-//    bTeam.addPlayers(bPlayer2)
+//    bTeam.addPlayers(bPlayer2)\
+
+    val mixedList = mutableListOf(1,"two",3,"four",5,"six",7,"eight",9,"ten");
+    val filteredList = getSpecificTypes<Int>(mixedList);
+
+    print("Filter List")
+    println(filteredList);
 }
 
 
-class Team<T: Player>(val name: String, val players: MutableList<out T>) {
+class Team<T>(val name: String, val players: MutableList<out T>) where T: Player, T: Move {
     fun addPlayers(player: T) {
-        if(players.contains(player)) {
+        if (players.contains(player)) {
             println("Player: ${player.name} is already in team $name")
-        }else {
+        } else {
 //            players.add(player);
             println("Player: ${player.name} was added team $name")
         }
     }
 }
 
-open class Player (val name: String)
+open class Player(val name: String)
 
-class FootballPlayer (name: String): Player(name);
-class BaseballPlayer (name: String): Player(name);
-open class GamesPlayer(name: String): Player(name);
-class CallOfDutyPlayer (name: String): GamesPlayer(name)
+class FootballPlayer(name: String) : Player(name), Move {
+    override fun running() {
+        TODO("Not yet implemented")
+    }
+}
+class BaseballPlayer(name: String) : Player(name), Move {
+    override fun running() {
+        TODO("Not yet implemented")
+    }
+}
+open class GamesPlayer(name: String) : Player(name), Move {
+    override fun running() {
+        TODO("Not yet implemented")
+    }
+}
+class CallOfDutyPlayer(name: String) : GamesPlayer(name), Move {
+    override fun running() {
+        TODO("Not yet implemented")
+    }
+}
 
+interface Move {
+    fun running()
+}
 
-//fun <>
+/**
+ * A function with a `reified` type, ensuring the type is preserved at runtime.
+ */
+inline fun <reified T> getSpecificTypes(list: List<Any>): List<T> {
+    val ofSpecifiedType = mutableListOf<T>();
+    for (i in list) {
+        if (i is T) {
+            ofSpecifiedType.add(i);
+        }
+    }
+    return ofSpecifiedType;
+}
+
+/**
+ * function with multiple upper bounds
+ */
+fun <T> addPlayer(player: T) where T: Player, T: Move {
+    println(player)
+}
